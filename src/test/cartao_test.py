@@ -1,5 +1,5 @@
 import unittest
-from model.cartao import Cartao
+from core.cartao import Cartao
 
 
 class CartaoTest(unittest.TestCase):
@@ -18,8 +18,9 @@ class CartaoTest(unittest.TestCase):
     def testStr(self):
         cartao = Cartao((0, 1, 2, 3, 4, 7))
         cartao_str = str(cartao)
-        print(cartao_str)
-
+        
+        self.assertEqual(str(cartao), "00 - 01 - 02 - 03 - 04 - 07")
+        self.assertEqual(cartao.to_string(';'), "00;01;02;03;04;07")
 
 
 if __name__ == "__main__":
