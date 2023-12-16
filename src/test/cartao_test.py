@@ -23,5 +23,11 @@ class CartaoTest(unittest.TestCase):
         self.assertEqual(cartao.to_string(';'), "00;01;02;03;04;07")
 
 
+    def testEqual(self):
+        cartao_a = Cartao((1, 2, 3, 4, 7))
+        cartao_b = Cartao((2, 1, 7, 3, 4))
+
+        self.assertEqual(cartao_a, cartao_b)
+
 if __name__ == "__main__":
     unittest.main()
