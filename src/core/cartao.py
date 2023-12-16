@@ -39,3 +39,6 @@ class Cartao:
 
     def __str__(self):
         return self.to_string(' - ')
+    
+    def __hash__(self) -> int:
+        return self.__bitmap
