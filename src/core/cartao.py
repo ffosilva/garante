@@ -5,9 +5,9 @@ from typing import Iterable, Optional
 
 
 class Cartao:
-    __bitmap: int = 0
-
     def __init__(self, numeros: Optional[Iterable[int]] = None, bitmap: Optional[int] = None) -> None:
+        self.__bitmap: int = 0
+
         if bitmap is not None:
             self.__bitmap = bitmap
             return
