@@ -4,8 +4,8 @@ from garante import main
 
 total_dezenas = 10
 tamanho_aposta = 6
-garante = 5
-acertando = 5
+garante = 4
+acertando = 4
 caminho_saida = "./"
 seed = None
 ustdout = open(os.devnull, 'w')

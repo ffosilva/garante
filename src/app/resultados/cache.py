@@ -1,0 +1,2 @@
+class NoCache():
+    def (key):
