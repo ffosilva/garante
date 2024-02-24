@@ -106,7 +106,7 @@ class CachedResultadosClient(ResultadosClient):
         super().__init__(loteria)
 
         self.cache_dir = os.path.join(cache_dir, loteria)
-        os.makedirs(cache_dir, exist_ok = True)
+        os.makedirs(self.cache_dir, exist_ok = True)
     
     def get_resultado(self, concurso: int | None = None) -> Resultado:
         if concurso is None:
@@ -125,7 +125,12 @@ class CachedResultadosClient(ResultadosClient):
 
 
 if __name__ == "__main__":
-    client = CachedResultadosClient("megasena")
+    client = CachedResultadosClient("lotofacil")
 
-    resultado = client.get_resultado()
-    print(resultado.concurso)
+    ultimo_resultado = client.get_resultado()
+    numero_concurso = ultimo_resultado.concurso
+
+    print(f"ultimo concuros: {numero_concurso}")
+
+    for i in range(1, numero_concurso + 1):
+        client.get_resultado(i)
