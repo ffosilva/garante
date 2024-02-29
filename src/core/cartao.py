@@ -15,6 +15,16 @@ class Cartao:
         for numero in numeros:
             self.__set_bit(numero)
 
+    def lin_col(self) -> tuple[int, int]:
+        set_linhas = set()
+        set_colunas = set()
+    
+        for dezena in self.iterate():
+            set_linhas.add(int((dezena - 1) / 10))
+            set_colunas.add(int(((dezena - 1) % 10) + 1))
+        
+        return (len(set_linhas), len(set_colunas))
+
     def conferir(self, cartao: Self) -> Self:
         acertos: int = cartao.__bitmap & self.__bitmap
         return Cartao(None, acertos)
