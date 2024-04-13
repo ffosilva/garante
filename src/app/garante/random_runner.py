@@ -2,7 +2,7 @@ import sys
 import os
 from garante import main
 
-total_dezenas = 10
+total_dezenas = 12
 tamanho_aposta = 6
 garante = 5
 acertando = 5

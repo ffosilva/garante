@@ -2,6 +2,7 @@ import requests
 import threading
 import os
 import json
+import random
 
 from core.cartao import Cartao
 from requests.adapters import HTTPAdapter
@@ -124,6 +125,13 @@ class CachedResultadosClient(ResultadosClient):
             return self._process_response(response)
 
 
+def gerar_jogo(quantidade_dezenas, maior_dezena):
+    todas_dezenas = list(range(1, maior_dezena + 1))
+    random.shuffle(todas_dezenas)
+
+    return todas_dezenas[:quantidade_dezenas]
+
+
 if __name__ == "__main__":
     client = CachedResultadosClient("lotofacil")
 
@@ -132,5 +140,32 @@ if __name__ == "__main__":
 
     print(f"ultimo concuros: {numero_concurso}")
 
+    resultados = []
     for i in range(1, numero_concurso + 1):
-        client.get_resultado(i)
+        resultado = Cartao(list(map(int, client.get_resultado(i).iterate())))
+        resultados.append(resultado)
+
+
+    max_acertos = 0
+    min_acertos = 12
+    qtde_cartoes = 4
+    qtde_dezenas = 18
+    maior_dezena = 25
+    while True:
+        ja_foi = [False for i in range(len(resultados))]
+        cartoes = []
+        acertos_total = 0
+        for i in range(qtde_cartoes):
+            novo_cartao = Cartao(gerar_jogo(qtde_dezenas, maior_dezena))
+            for idx, resultado in enumerate(resultados):
+                if not ja_foi[idx] and novo_cartao.qtde_acertos(resultado) >= min_acertos:
+                    acertos_total += 1
+                    ja_foi[idx] = True
+            cartoes.append(novo_cartao)
+        
+        if acertos_total >= max_acertos:
+            print(f"total de acertos: {acertos_total}")
+            max_acertos = acertos_total
+
+            for cartao in cartoes:
+                print(cartao)
