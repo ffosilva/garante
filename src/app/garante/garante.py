@@ -7,7 +7,7 @@ import sys
 
 from itertools import combinations
 from random import Random
-from node import Node
+from app.garante.node import Node
 from core.cartao import Cartao
 from unbuffered import Unbuffered
 from typing import Iterable, Optional
