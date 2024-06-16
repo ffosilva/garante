@@ -56,7 +56,10 @@ class Cartao:
 
     def __str__(self):
         return self.to_string(' - ')
-    
+
+    def __repr__(self):
+        return f"Cartao([{', '.join([f"{num:.0f}" for num in Cartao.__bits(self.__bitmap)])}])"
+
     def __hash__(self) -> int:
         return self.__bitmap
 
