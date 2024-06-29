@@ -53,6 +53,23 @@ class Cartao:
 
     def iterate(self) -> Iterable[int]:
         return Cartao.__bits(self.__bitmap)
+    
+    def num_clusters(self) -> int:
+        bitmap = self.__bitmap
+
+        clusters = 0
+        on_cluster = False
+        while bitmap != 0:
+            if bitmap & 1 == 1:
+                if not on_cluster:
+                    on_cluster = True
+                    clusters += 1
+            else:
+                on_cluster = False
+
+            bitmap >>= 1
+
+        return clusters
 
     def __str__(self):
         return self.to_string(' - ')

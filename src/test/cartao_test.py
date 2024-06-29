@@ -29,5 +29,21 @@ class CartaoTest(unittest.TestCase):
 
         self.assertEqual(cartao_a, cartao_b)
 
+    def testClusters(self):
+        cartao = Cartao((1, 2, 3, 4, 7))
+        assert cartao.num_clusters() == 2
+
+        cartao = Cartao(())
+        assert cartao.num_clusters() == 0
+
+        cartao = Cartao((3, 5, 7, 9))
+        assert cartao.num_clusters() == 4
+
+        cartao = Cartao((1, 3, 5, 7, 9))
+        assert cartao.num_clusters() == 5
+
+        cartao = Cartao((1, 2, 3, 4, 5, 6, 7, 8, 9))
+        assert cartao.num_clusters() == 1
+
 if __name__ == "__main__":
     unittest.main()
