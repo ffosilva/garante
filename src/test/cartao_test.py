@@ -45,5 +45,14 @@ class CartaoTest(unittest.TestCase):
         cartao = Cartao((1, 2, 3, 4, 5, 6, 7, 8, 9))
         assert cartao.num_clusters() == 1
 
+    def testMinMax(self):
+        cartao = Cartao((1,))
+        assert cartao.min() == 1
+        assert cartao.max() == 1
+        
+        cartao = Cartao((2,10,20,30,40))
+        assert cartao.min() == 2
+        assert cartao.max() == 40
+
 if __name__ == "__main__":
     unittest.main()

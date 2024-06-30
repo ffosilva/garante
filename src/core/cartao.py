@@ -15,13 +15,13 @@ class Cartao:
         for numero in numeros:
             self.__set_bit(numero)
 
-    def lin_col(self) -> tuple[int, int]:
+    def lin_col(self, largura = 10) -> tuple[int, int]:
         set_linhas = set()
         set_colunas = set()
     
         for dezena in self.iterate():
-            set_linhas.add(int((dezena - 1) / 10))
-            set_colunas.add(int(((dezena - 1) % 10) + 1))
+            set_linhas.add(int((dezena - 1) / largura))
+            set_colunas.add(int(((dezena - 1) % largura) + 1))
         
         return (len(set_linhas), len(set_colunas))
 
@@ -70,6 +70,18 @@ class Cartao:
             bitmap >>= 1
 
         return clusters
+
+    def min(self) -> int | None:
+        if self.__bitmap == 0:
+            return None
+        
+        return (self.__bitmap & -self.__bitmap).bit_length() - 1
+
+    def max(self) -> int | None:
+        if self.__bitmap == 0:
+            return None
+
+        return self.__bitmap.bit_length() - 1
 
     def __str__(self):
         return self.to_string(' - ')
