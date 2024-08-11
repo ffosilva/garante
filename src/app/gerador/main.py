@@ -1,10 +1,10 @@
 import random
 
-qtde_cartoes = 40
-tamanho_cartao = 6
-maior_dezena = 60
-arquivo_entrada = 'numeros_entrada.csv'
-
+qtde_cartoes = 3
+tamanho_cartao = 18
+maior_dezena = 25
+#arquivo_entrada = 'numeros_entrada.csv'
+arquivo_entrada = None
 
 def numeros_entrada(arquivos_numeros: str):
     with open(arquivos_numeros, 'r') as numeros:
@@ -28,7 +28,7 @@ if __name__ == "__main__":
         argument = arquivo_entrada
     else:
         func = gerar_numeros
-        arg = maior_dezena
+        argument = maior_dezena
     
     numeros = func(argument)
 

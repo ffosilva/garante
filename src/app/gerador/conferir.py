@@ -13,7 +13,5 @@ with open(sys.argv[1], 'r') as jogos_fd:
                 acertos_jogo += 1
         acertos[acertos_jogo] = acertos.get(acertos_jogo, 0) + 1
 
-        if acertos_jogo >= 4:
-            print(jogo)
-
-print(acertos)
+for e in dict(reversed(sorted(acertos.items()))).items():
+    print(f"acertos: {e[0]} - qtde: {e[1]}")

@@ -4,7 +4,7 @@ from core.cartao import Cartao
 from typing import Iterator, Iterable
 from itertools import combinations
 
-from node import Node
+from app.garante.node import Node
 
 def gerar_cartoes(qtde_dezenas: int, tamanho_cartao: int) -> Iterator[Cartao]:
     for comb in combinations(range(1, qtde_dezenas + 1), tamanho_cartao):

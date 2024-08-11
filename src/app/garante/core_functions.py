@@ -4,21 +4,21 @@ import numpy as np
 import logging
 
 from random import Random
-from typing import Optional, List
+from typing import Optional, List, Iterator
 from app.garante.utils import gerar_combinacoes, current_milli_time
 from core.cartao import Cartao
 
 
-def garante(total_dezenas: int, tamanho_aposta: int, garante: int, acertando: int, seed: Optional[int] = None, force_random: Optional[bool] = False) -> List[Cartao]:
+def garante(todas_combinacoes_generator: Iterator[Cartao], combinacoes_garante_generator: Iterator[Cartao], garante: int, seed: Optional[int] = None, force_random: Optional[bool] = False) -> List[Cartao]:
     logger = logging.getLogger(__name__)
 
     progresso_grafo = 0
     progresso_processamento = 0
 
-    combinacoes_cartoes = list(gerar_combinacoes(total_dezenas, tamanho_aposta))
+    combinacoes_cartoes = list(todas_combinacoes_generator)
     logger.info("Foram gerados {:d} cartões.".format(len(combinacoes_cartoes)))
 
-    combinacoes_garante = list(gerar_combinacoes(total_dezenas, acertando))
+    combinacoes_garante = list(combinacoes_garante_generator)
     total_combinacoes_garante = len(combinacoes_garante)
     logger.info("Foram geradas {:d} combinações.".format(total_combinacoes_garante))
 
@@ -58,8 +58,6 @@ def garante(total_dezenas: int, tamanho_aposta: int, garante: int, acertando: in
         if total_inicial is None:
             total_inicial = total_acertos_cartoes_n
 
-        progresso_processamento = (1 - (total_acertos_cartoes_n/total_inicial)) * 100
-
         if len(acertos_cartoes_n) == 0 or max(acertos_cartoes_n) == 0:
             break
 
@@ -74,7 +72,7 @@ def garante(total_dezenas: int, tamanho_aposta: int, garante: int, acertando: in
 
     logger.info(f"Conferência iniciada.")
 
-    for cartao_da_vez in gerar_combinacoes(total_dezenas, acertando):
+    for cartao_da_vez in combinacoes_garante:
         encontrado = False
         for cartao in cartoes_escolhidos:
             if cartao_da_vez.value.qtde_acertos(cartao.value) >= garante:

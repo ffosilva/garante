@@ -2,10 +2,10 @@ import sys
 import os
 from garante import main
 
-total_dezenas = 12
-tamanho_aposta = 6
-garante = 5
-acertando = 5
+total_dezenas = 18
+tamanho_aposta = 15
+garante = 14
+acertando = 14
 caminho_saida = "./"
 seed = None
 ustdout = open(os.devnull, 'w')

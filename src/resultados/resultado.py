@@ -1,6 +1,7 @@
 import requests
 import threading
 import os
+import sys
 import json
 import random
 
@@ -103,8 +104,20 @@ class ResultadosClient:
 
 
 class CachedResultadosClient(ResultadosClient):
-    def __init__(self, loteria: str, cache_dir: str = "cache"):
+    __DEFAULT_CACHE_DIR = "cache"
+
+    @staticmethod
+    def __get_cache_dir(cache_dir: Optional[str] = None):
+        if cache_dir is None:
+            cache_dir = os.environ.get("GARANTE_CACHE_DIR", CachedResultadosClient.__DEFAULT_CACHE_DIR)
+
+        return cache_dir
+    
+
+    def __init__(self, loteria: str, cache_dir: Optional[str] = None):
         super().__init__(loteria)
+
+        cache_dir = CachedResultadosClient.__get_cache_dir(cache_dir)
 
         self.cache_dir = os.path.join(cache_dir, loteria)
         os.makedirs(self.cache_dir, exist_ok = True)
@@ -133,39 +146,19 @@ def gerar_jogo(quantidade_dezenas, maior_dezena):
 
 
 if __name__ == "__main__":
-    client = CachedResultadosClient("lotofacil")
+    if len(sys.argv) == 1:
+        print(f"usage: python {sys.argv[0]} <nome da loteria>")
+        exit(1)
+
+    nome_loteria = sys.argv[1]
+    client = CachedResultadosClient(nome_loteria)
 
     ultimo_resultado = client.get_resultado()
     numero_concurso = ultimo_resultado.concurso
 
-    print(f"ultimo concuros: {numero_concurso}")
+    print(f"Loteria: {nome_loteria} - Último concurso: {numero_concurso}")
 
     resultados = []
     for i in range(1, numero_concurso + 1):
         resultado = Cartao(list(map(int, client.get_resultado(i).iterate())))
         resultados.append(resultado)
-
-
-    max_acertos = 0
-    min_acertos = 12
-    qtde_cartoes = 4
-    qtde_dezenas = 18
-    maior_dezena = 25
-    while True:
-        ja_foi = [False for i in range(len(resultados))]
-        cartoes = []
-        acertos_total = 0
-        for i in range(qtde_cartoes):
-            novo_cartao = Cartao(gerar_jogo(qtde_dezenas, maior_dezena))
-            for idx, resultado in enumerate(resultados):
-                if not ja_foi[idx] and novo_cartao.qtde_acertos(resultado) >= min_acertos:
-                    acertos_total += 1
-                    ja_foi[idx] = True
-            cartoes.append(novo_cartao)
-        
-        if acertos_total >= max_acertos:
-            print(f"total de acertos: {acertos_total}")
-            max_acertos = acertos_total
-
-            for cartao in cartoes:
-                print(cartao)

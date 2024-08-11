@@ -18,3 +18,14 @@ def qtde_acertos(cartoes: list[Cartao]) -> tuple[int, int]:
             menor_qtde_acertos = min(cartoes[i].qtde_acertos(cartoes[j]), menor_qtde_acertos)
 
     return (menor_qtde_acertos, maior_qtde_acertos)
+
+def qtde_clusters(cartoes: list[Cartao]) -> tuple[int, int]:
+    menor_qtde_cluster = +inf
+    maior_qtde_clusters = -inf
+
+    for cartao in cartoes:
+        clusters = cartao.num_clusters()
+        menor_qtde_cluster = min(clusters, menor_qtde_cluster)
+        maior_qtde_clusters = max(clusters, maior_qtde_clusters)
+
+    return (menor_qtde_cluster, maior_qtde_clusters)
