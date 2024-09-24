@@ -9,9 +9,9 @@ from itertools import combinations
 from random import Random
 from app.garante.node import Node
 from core.cartao import Cartao
-from unbuffered import Unbuffered
+from app.garante.unbuffered import Unbuffered
 from typing import Iterable, Optional
-from app_args import AppArgs
+from app.garante.app_args import AppArgs
 
 melhor_encontrado = float('inf')
 

@@ -29,7 +29,7 @@ class Cartao:
         acertos: int = cartao.__bitmap & self.__bitmap
         return Cartao(None, acertos)
 
-    def qtde_acertos(self, cartao: Self) -> Self:
+    def qtde_acertos(self, cartao: Self) -> int:
         acertos: int = cartao.__bitmap & self.__bitmap
         return acertos.bit_count()
 
@@ -52,8 +52,8 @@ class Cartao:
         return separator.join([f"{num:02.0f}" for num in Cartao.__bits(self.__bitmap)])
 
     def iterate(self) -> Iterable[int]:
-        return Cartao.__bits(self.__bitmap)
-    
+        return map(int, Cartao.__bits(self.__bitmap))
+
     def num_clusters(self) -> int:
         bitmap = self.__bitmap
 
@@ -87,7 +87,7 @@ class Cartao:
         return self.to_string(' - ')
 
     def __repr__(self):
-        return f"Cartao([{', '.join([f"{num:.0f}" for num in Cartao.__bits(self.__bitmap)])}])"
+        return f"Cartao([{', '.join([f'{num:.0f}' for num in Cartao.__bits(self.__bitmap)])}])"
 
     def __hash__(self) -> int:
         return self.__bitmap

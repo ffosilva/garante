@@ -1,0 +1,5 @@
+services:
+  database:
+    image: postgres:16.4-alpine3.20
+    
+    
