@@ -13,10 +13,10 @@ if __name__ == "__main__":
 
     print(f"ultimo concuros: {numero_concurso}")
 
-    num_cartoes = 14
-    qtde_dezenas = 15
-    maior_dezena = 25
-    alvo = 11
+    num_cartoes = 20
+    qtde_dezenas = 6
+    maior_dezena = 60
+    alvo = 6
 
     todos_resultados = set()
     for i in range(1, numero_concurso + 1):
@@ -33,10 +33,10 @@ if __name__ == "__main__":
 
     max_combinacoes_alvo = 0
     while True:
-        globo = Globo(25)
+        globo = Globo(maior_dezena)
         cartoes = set()
         while len(cartoes) < num_cartoes:
-            cartoes.add(globo.gerar_cartao(15))
+            cartoes.add(globo.gerar_cartao(qtde_dezenas))
         
         combinacoes_alvo = set()
         for cartao in cartoes:
