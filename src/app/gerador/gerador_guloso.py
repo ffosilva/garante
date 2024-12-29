@@ -6,17 +6,17 @@ from core.stats import *
 from app.gerador.globo import Globo
 
 if __name__ == "__main__":
-    client = CachedResultadosClient("lotofacil")
+    client = CachedResultadosClient("megasena")
 
     ultimo_resultado = client.get_resultado()
     numero_concurso = ultimo_resultado.concurso
 
     print(f"ultimo concuros: {numero_concurso}")
 
-    num_cartoes = 20
+    num_cartoes = 412
     qtde_dezenas = 6
     maior_dezena = 60
-    alvo = 6
+    alvo = 4
 
     todos_resultados = set()
     for i in range(1, numero_concurso + 1):

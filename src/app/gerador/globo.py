@@ -10,17 +10,22 @@ class Globo():
 
     def reinicia_globo(self) -> None:
         self.__globo.extend([i for i in range(1, self.__maior_dezena + 1)])
+        self.girar_globo()
+
+    def girar_globo(self) -> None:
         random.shuffle(self.__globo)
 
     def pegar_dezena(self) -> int:
         if len(self.__globo) <= 0:
             self.reinicia_globo()
-        
+        else:
+            self.girar_globo()
+
         return self.__globo.pop()
 
     def devolver_dezena(self, dezena):
-        self.__globo.insert(1, dezena)
-        random.shuffle(self.__globo)
+        self.__globo.append(dezena)
+        self.girar_globo()
 
     def gerar_cartao(self, tamanho_cartao) -> Cartao:
         dezenas_cartao: set[int] = set()
@@ -35,7 +40,7 @@ class Globo():
         return Cartao(dezenas_cartao)
 
 if __name__ == "__main__":
-    globo = Globo(25)
+    globo = Globo(60)
 
     for i in range(100):
-        print(globo.gerar_cartao(15))
+        print(globo.gerar_cartao(6))
