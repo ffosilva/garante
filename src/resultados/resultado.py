@@ -5,6 +5,7 @@ import sys
 import json
 import random
 
+from typing import Any
 from core.cartao import Cartao
 from requests.adapters import HTTPAdapter
 from typing import Iterable, Optional
@@ -16,10 +17,15 @@ requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
 
 class Resultado(Cartao):
-    def __init__(self, loteria: str, concurso: int, numeros: Iterable[int] | None = None, bitmap: int | None = None) -> None:
+    rateio: dict[str, Any]
+    qtde_dezenas: int
+
+    def __init__(self, loteria: str, concurso: int, numeros: Iterable[int] | None = None, bitmap: int | None = None, rateio: dict[str, Any] = None) -> None:
         super().__init__(numeros, bitmap)
         self.loteria = loteria
         self.concurso = concurso
+        self.rateio = rateio
+        self.qtde_dezenas = len(numeros)
 
 
 class SessionHandler:
@@ -73,11 +79,13 @@ class ResultadosClient:
         self.loteria = loteria
         self.session_hander = SessionHandler()
 
-    def _process_response(self, response_json):
+    def _process_response(self, response_json: dict[str, str]) -> Resultado:
         dezenas = list(map(int, response_json["dezenasSorteadasOrdemSorteio"]))
         concurso = response_json["numero"]
-        
-        return Resultado(self.loteria, concurso, dezenas)
+        rateio = response_json["listaRateioPremio"]
+  
+        return Resultado(self.loteria, concurso, dezenas, rateio=rateio)
+    
 
     def _get_resultado_from_remote(self, concurso: str | None) -> dict:
         concurso_str = ""
@@ -124,7 +132,8 @@ class CachedResultadosClient(ResultadosClient):
     
     def get_resultado(self, concurso: int | None = None) -> Resultado:
         if concurso is None:
-            return super().get_resultado()
+            num_concurso = super().get_resultado().concurso
+            return self.get_resultado(num_concurso)
 
         concurso_path = os.path.join(self.cache_dir, f"{concurso}.json")
         if os.path.exists(concurso_path):

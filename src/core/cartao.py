@@ -37,6 +37,12 @@ class Cartao:
         self.__bitmap |= (1 << bit)
         return self.__bitmap
 
+    def add(self, numero: int) -> None:
+        self.__set_bit(numero)
+
+    def remove(self, numero: int) -> None:
+        self.__bitmap &= ~(1 << numero)
+
     def __len__(self) -> int:
         return self.__bitmap.bit_count()
 
@@ -94,3 +100,15 @@ class Cartao:
 
     def __eq__(self, __value: object) -> bool:
         return type(__value) == Cartao and __value.__bitmap == self.__bitmap
+
+    def __iter__(self):
+        yield from self.iterate()
+
+    def distancia(self, initial: int, final: int) -> int:
+        for i, dezena in enumerate(Cartao.__bits(self.__bitmap), 1):
+            if initial == i:
+                dezena_inicial = dezena
+            
+            if final == i:
+                dezena_final = dezena
+                return dezena_final - dezena_inicial

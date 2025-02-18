@@ -1,4 +1,4 @@
-FROM pypy:3.10-7.3.16-bookworm
+FROM pypy:3.10-7.3.17-bookworm
 
 COPY ./requirements.txt /temp/requirements.txt
 

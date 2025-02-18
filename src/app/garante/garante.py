@@ -47,6 +47,12 @@ def main(total_dezenas: int, tamanho_aposta: int, garante: int, acertando: int, 
         exit(1)
     else:
         nome_arquivo = "matriz_{:d}_{:d}_{:d}_{:d}".format(total_dezenas, tamanho_aposta, garante, acertando)
+        for filename in os.listdir():
+            if filename.startswith(nome_arquivo) and not seed:
+                print(f"Erro: arquivo '{filename}' já existe.", file=ustdout)
+                total_de_apostas = filename.replace(nome_arquivo, "").replace(".csv", "")[1:]
+                print(f"Total de apostas: {total_de_apostas}", file=ustdout)
+                exit()
 
     # gerando combinações para escolher
     print("Gerando cartões para serem escolhidos ...", end=" ", file=ustdout)
