@@ -5,10 +5,8 @@ cycler==0.12.1
 fonttools==4.55.3
 idna==3.10
 kiwisolver==1.4.8
-matplotlib==3.10.0
 numpy==1.26.3
 packaging==24.2
-pillow==11.1.0
 pyparsing==3.2.1
 python-dateutil==2.9.0.post0
 requests==2.32.3

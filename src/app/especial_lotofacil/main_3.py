@@ -45,19 +45,16 @@ def gerar_anticartao(numero_de_dezenas: int, maior_dezena: int, menor_dezena:int
     return Cartao(dezenas)
 
 
-def distancias(cartao: Cartao) -> Iterable[int]:
-    return [cartao.distancia(1, 11),cartao.distancia(2, 12), cartao.distancia(3, 13), cartao.distancia(4, 14), cartao.distancia(5, 15)]
-
-
 def main(lock, max_acertos, execution_file, todos_resultados, foco, combinacoes_foco):
     matriz_path = "/home/ffosilva/repos/ffosilva/garante/src/app/garante/matriz_18_15_14_15_24.csv"
     matriz_path = "/app/src/app/garante/matriz_18_15_14_15_24.csv"
 
     qtde_dezenas = 18
-    numero_de_geracoes = 10
+    numero_de_geracoes = 3
     anticartoes_por_geracao = 0
 
     while True:
+        combinacoes_foco_local = combinacoes_foco.copy()
         apostas_set: set[Cartao] = set()
         jogos_orignais: set[Cartao] = set()
         for i in range(numero_de_geracoes):
@@ -73,11 +70,16 @@ def main(lock, max_acertos, execution_file, todos_resultados, foco, combinacoes_
         acertos = {}
         foco_encontrado = set()
         for aposta in apostas_set:
-            for res in combinacoes_foco:
+            to_delete = set()
+            for res in combinacoes_foco_local:
                 qt_acertos = aposta.qtde_acertos(res)
                 if qt_acertos >= foco:
                     acertos[qt_acertos] = acertos.get(qt_acertos, 0) + 1
                     foco_encontrado.add(res)
+                    to_delete.add(res)
+            for elem in to_delete:
+                combinacoes_foco_local.remove(elem)
+            to_delete.clear()
         
         write_output(jogos_orignais, apostas_set, acertos, foco, max_acertos, execution_file, lock, foco_encontrado)
 
@@ -108,7 +110,7 @@ if __name__ == "__main__":
     execution_file = f"temp_{random.randint(1, 1000)}.txt"
     client = CachedResultadosClient("lotofacil")
 
-    foco = 11
+    foco = 12
 
     ultimo_resultado = client.get_resultado()
 
