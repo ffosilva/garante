@@ -1,10 +1,27 @@
 import sys
-
+from resultados.resultado import CachedResultadosClient
 
 numeros = []
 arquivos = []
 
+usar_resultado = False
+loteria = None
+concurso = None
+
 for arg in sys.argv[1:]:
+    if "last-" in arg:
+        arg = arg.split("-")
+        usar_resultado = True
+        loteria = arg[1]
+        continue
+
+    if "res-" in arg:
+        arg = arg.split("-")
+        concurso = int(arg[2])
+        loteria = arg[1]
+        usar_resultado = True
+        continue
+
     if arg.isdigit():
         numeros.append(int(arg))
     else:
@@ -12,6 +29,12 @@ for arg in sys.argv[1:]:
 
 print(numeros)
 print(arquivos)
+
+if usar_resultado:
+    client = CachedResultadosClient(loteria)
+    res = client.get_resultado(concurso)
+    numeros = list(res.iterate())
+    print(numeros)
 
 for arquivo in arquivos:
     acertos = {}
