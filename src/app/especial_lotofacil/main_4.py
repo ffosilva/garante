@@ -4,6 +4,8 @@ from core.posicao import posicao
 from core.cartao import Cartao
 from itertools import combinations
 from multiprocessing import Lock, Process, Value
+from core.filters import FilterChain, ClustersFilter, BlockListFilter
+from math import inf
 import random
 import numpy as np
 
@@ -45,61 +47,53 @@ def gerar_anticartao(numero_de_dezenas: int, maior_dezena: int, menor_dezena:int
     return Cartao(dezenas)
 
 
-def main(lock, max_acertos, execution_file, todos_resultados, foco, combinacoes_foco):
-    matriz_path = "/home/ffosilva/repos/ffosilva/garante/src/app/garante/matriz_18_15_14_15_24.csv"
-    matriz_path = "/app/src/app/garante/matriz_18_15_14_15_24.csv"
+def main(lock, max_acertos, execution_file, foco, filter_chain: FilterChain):
+    matriz_path = "../garante/matriz_18_15_14_15_24.csv"
+    #matriz_path = "/app/src/app/garante/matriz_18_15_14_15_24.csv"
 
     qtde_dezenas = 18
-    numero_de_geracoes = 2
-    anticartoes_por_geracao = 1
+    numero_de_geracoes = 4
+    anticartoes_por_geracao = 0
 
     while True:
-        combinacoes_foco_local = combinacoes_foco.copy()
         apostas_set: set[Cartao] = set()
-        jogos_orignais: set[Cartao] = set()
-        for i in range(numero_de_geracoes):
+        jogos_originais: set[Cartao] = set()
+        for _ in range(numero_de_geracoes):
             combinacao_aleatoria = list(gerar_combinacao_aleatoria(qtde_dezenas, 25, 1))
-            jogos_orignais.add(Cartao(combinacao_aleatoria))
+            jogos_originais.add(Cartao(combinacao_aleatoria))
             apostas_set = apostas_set.union(explode_garante(combinacao_aleatoria, matriz_path))
-            for j in range(anticartoes_por_geracao):
+            for _ in range(anticartoes_por_geracao):
                 anticartao = list(gerar_anticartao(qtde_dezenas, 25, 1, combinacao_aleatoria))
-                jogos_orignais.add(Cartao(anticartao))
+                jogos_originais.add(Cartao(anticartao))
                 apostas_set = apostas_set.union(explode_garante(anticartao, matriz_path))
 
+        apostas_set = list(filter(filter_chain.accepts, apostas_set))
 
-        acertos = {}
         foco_encontrado = set()
         for aposta in apostas_set:
-            to_delete = set()
-            for res in combinacoes_foco_local:
-                qt_acertos = aposta.qtde_acertos(res)
-                if qt_acertos >= foco:
-                    acertos[qt_acertos] = acertos.get(qt_acertos, 0) + 1
-                    foco_encontrado.add(res)
-                    to_delete.add(res)
-            for elem in to_delete:
-                combinacoes_foco_local.remove(elem)
-            to_delete.clear()
-        
-        write_output(jogos_orignais, apostas_set, acertos, foco, max_acertos, execution_file, lock, foco_encontrado)
+            for comb_foco in combinations(aposta.iterate(), foco):
+                foco_encontrado.add(Cartao(comb_foco))
+
+        write_output(jogos_originais, apostas_set, max_acertos, execution_file, lock, foco_encontrado)
 
 
-def write_output(jogos_orignais, apostas_set, acertos, foco, max_acertos, execution_file, lock, foco_encontrado):
+def write_output(jogos_orignais, apostas_set, max_acertos, execution_file, lock, foco_encontrado):
     try:
         lock.acquire()
 
-        if foco in acertos and len(foco_encontrado) > max_acertos.value:
+        if len(foco_encontrado) > max_acertos.value:
             max_acertos.value = len(foco_encontrado)
 
             print(execution_file)
             for jogo_original in jogos_orignais:
                 print(jogo_original.to_string(" - "))
-            print(acertos)
+
             with open(execution_file, "w") as f:
                 for aposta in apostas_set:
                     f.write(aposta.to_string(";"))
                     f.write("\n")
                     # print(aposta.to_string(";"))
+            print(len(foco_encontrado))
     finally:
         lock.release()
 
@@ -108,27 +102,30 @@ if __name__ == "__main__":
     lock = Lock()
     max_acertos = shared_int = Value('i', 0)
     execution_file = f"temp_{random.randint(1, 1000)}.txt"
-    client = CachedResultadosClient("lotofacil")
 
-    foco = 12
+    resultados_client = CachedResultadosClient("lotofacil")
+    ultimo_resultado = resultados_client.get_resultado()
 
-    ultimo_resultado = client.get_resultado()
+    block_filter = BlockListFilter()
+    min_clusters, max_clusters = +inf, -inf
+    clusters = []
 
-    todos_resultados = set()
-    todos_resultados.add(ultimo_resultado)
-    for i in range(1, ultimo_resultado.concurso):
-        todos_resultados.add(client.get_resultado(i))
+    # calcular os clusters (min e max)
+    for i in range(1, ultimo_resultado.concurso + 1):
+        resultado = resultados_client.get_resultado(i)
+        block_filter.add(resultado)
+        min_clusters = min(min_clusters, resultado.num_clusters())
+        max_clusters = max(max_clusters, resultado.num_clusters())
+        clusters.append(resultado.num_clusters())
 
-    print(f"Inicializando o conjunto de todos os resultados com foco em {foco} acertos... ", end="")
-    foco_set = set()
-    for res in todos_resultados:
-        for comb in combinations(list(res), foco):
-            foco_set.add(Cartao(comb))
-    print(f"OK! {len(foco_set)} combinações possíveis.")
+    cluster_filter = ClustersFilter(min_clusters, max_clusters)
+    filter_chain = FilterChain([block_filter, cluster_filter])
+
+    foco = 13
 
     processes = []
     for i in range(4):
-        p = Process(target=main, args=(lock, max_acertos, execution_file, todos_resultados, foco, foco_set))
+        p = Process(target=main, args=(lock, max_acertos, execution_file, foco, filter_chain))
         p.start()
         processes.append(p)
     

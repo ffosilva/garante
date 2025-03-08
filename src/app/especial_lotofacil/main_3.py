@@ -46,10 +46,9 @@ def gerar_anticartao(numero_de_dezenas: int, maior_dezena: int, menor_dezena:int
 
 
 def main(lock, max_acertos, execution_file, todos_resultados, foco, combinacoes_foco):
-    matriz_path = "/home/ffosilva/repos/ffosilva/garante/src/app/garante/matriz_18_15_14_15_24.csv"
-    matriz_path = "/app/src/app/garante/matriz_18_15_14_15_24.csv"
+    matriz_path = "../garante/matriz_19_15_14_15_141.csv"
 
-    qtde_dezenas = 18
+    qtde_dezenas = 19
     numero_de_geracoes = 3
     anticartoes_por_geracao = 0
 
@@ -110,7 +109,7 @@ if __name__ == "__main__":
     execution_file = f"temp_{random.randint(1, 1000)}.txt"
     client = CachedResultadosClient("lotofacil")
 
-    foco = 12
+    foco = 11
 
     ultimo_resultado = client.get_resultado()
 
