@@ -7,6 +7,7 @@ arquivos = []
 usar_resultado = False
 loteria = None
 concurso = None
+rateio = None
 
 for arg in sys.argv[1:]:
     if "last-" in arg:
@@ -34,10 +35,11 @@ if usar_resultado:
     client = CachedResultadosClient(loteria)
     res = client.get_resultado(concurso)
     numeros = list(res.iterate())
-    print(numeros)
+    rateio = res.rateio
 
 for arquivo in arquivos:
     acertos = {}
+    premio_total: float = 0.0
     print(arquivo)
     with open(arquivo, 'r') as jogos_fd:
         for line in jogos_fd:
@@ -49,4 +51,14 @@ for arquivo in arquivos:
             acertos[acertos_jogo] = acertos.get(acertos_jogo, 0) + 1
 
     for e in dict(reversed(sorted(acertos.items()))).items():
-        print(f"acertos: {e[0]} - qtde: {e[1]}")
+        print(f"acertos: {e[0]} - qtde: {e[1]}", end="")
+        if rateio:
+            for faixa in rateio:
+                if str(e[0]) in faixa['descricaoFaixa'].split(" "):
+                    premio = faixa['valorPremio'] * e[1]
+                    premio_total += premio
+                    print(f" - rateio: R$ {premio:.02f}", end="")
+        print()
+
+    if rateio:
+        print(f"\nPremio total: R$ {premio_total:.02f}\n\n")
