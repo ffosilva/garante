@@ -34,7 +34,7 @@ print(arquivos)
 if usar_resultado:
     client = CachedResultadosClient(loteria)
     res = client.get_resultado(concurso)
-    print(res)
+    print(f"{res.concurso} -> {res}")
     numeros = list(res.iterate())
     rateio = res.rateio
 
