@@ -16,16 +16,16 @@ def exact_set_cover(partition_a, partition_b, edges):
         problem += pulp.lpSum(x[a] for a in partition_a if b in edges[a]) >= 1, f"Cover {b}"
 
     # Solve the problem
-    problem.solve()
+    problem.solve(pulp.COIN_CMD(path="/opt/homebrew/opt/cbc/bin/cbc"))
 
     # Extract the selected nodes in partition A
     selected = [a for a in partition_a if x[a].value() == 1]
     
     return selected
 
-total_dezenas = 19
+total_dezenas = 18
 tamanho_aposta = 15
-acertando = 15
+acertando = 14
 
 garante = 14
 

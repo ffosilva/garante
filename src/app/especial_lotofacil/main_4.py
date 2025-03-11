@@ -52,8 +52,8 @@ def main(lock, max_acertos, execution_file, foco, filter_chain: FilterChain):
     #matriz_path = "/app/src/app/garante/matriz_18_15_14_15_24.csv"
 
     qtde_dezenas = 18
-    numero_de_geracoes = 4
-    anticartoes_por_geracao = 0
+    numero_de_geracoes = 10
+    anticartoes_por_geracao = 2
 
     while True:
         apostas_set: set[Cartao] = set()
